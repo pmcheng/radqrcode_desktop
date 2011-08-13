@@ -260,7 +260,7 @@ namespace Case_QRCode
                 DateTime latest = DateTime.MinValue;
                 DateTime current = DateTime.MinValue;
                 string fname = string.Empty;
-                if (accession != null)
+                if (accession != "")
                 {
                     byte[] readBuffer = new byte[4096];
                     byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
