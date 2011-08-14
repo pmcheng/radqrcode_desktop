@@ -204,7 +204,7 @@ namespace Case_QRCode
                     string imageURL = studyURL + "(" + offset + "," + length + ")";
                     //textBoxLine(imageURL);
                     downloadURL = imageURL;
-                    string dcmfile = Path.Combine(Path.GetTempPath(), "temp.dcm");
+                    string dcmfile = Path.ChangeExtension(Path.GetTempFileName(), ".dcm");
 
                     WebClient client = new WebClient();
                     client.Credentials = myCredentialCache;
@@ -212,7 +212,7 @@ namespace Case_QRCode
                     //string outputfile = Path.Combine(Path.GetTempPath(), "temp.txt");
                     //Run("dcmdump.exe", "", dcmfile, outputfile);
                     //textBoxLine(File.ReadAllText(outputfile));
-                    getDemographics(dcmfile, mrn);
+                    getDemographics(dcmfile, mrn, true);
                     File.Delete(dcmfile);
                     //Clipboard.SetText(textBoxStatus.Text);
                 }
@@ -259,7 +259,7 @@ namespace Case_QRCode
                 ArrayList results = WebCacheTool.WinInetAPI.FindUrlCacheEntries(@"/\d\.\d.*\)$");
                 DateTime latest = DateTime.MinValue;
                 DateTime current = DateTime.MinValue;
-                string fname = string.Empty;
+                string fname = "";
                 if (accession != "")
                 {
                     byte[] readBuffer = new byte[4096];
@@ -275,9 +275,13 @@ namespace Case_QRCode
                             if (accnum == accession) break;
                         }
                     }
-                    if (accnum != accession) fname = "";
+                    if (accnum != accession)
+                    {
+                        fname = "";
+                        accession = "";
+                    }
                 }
-                else
+                if (fname=="")
                 {
                     foreach (WebCacheTool.WinInetAPI.INTERNET_CACHE_ENTRY_INFO entry in results)
                     {
@@ -290,8 +294,8 @@ namespace Case_QRCode
 
                     }
                 }
-                if (fname != string.Empty)
-                    getDemographics(fname, mrn);
+                if (fname != "")
+                    getDemographics(fname, mrn, accession!="");
             }
 
         }
@@ -306,7 +310,7 @@ namespace Case_QRCode
             return returnValue;
         }
 
-        void getDemographics(string fname, string medrecnum)
+        void getDemographics(string fname, string medrecnum, bool correct_accession)
         {
 
             Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read);
@@ -315,13 +319,13 @@ namespace Case_QRCode
             int bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
 
             byte[] date = { 0x08, 0x00, 0x20, 0x00, 0x44, 0x41 };
-            byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
+            //byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
             byte[] desc = { 0x08, 0x00, 0x30, 0x10, 0x4c, 0x4f };
 
             byte[] pn = { 0x10, 0x00, 0x10, 0x00, 0x50, 0x4e };
             byte[] mrn = { 0x10, 0x00, 0x20, 0x00, 0x4c, 0x4f };
-            byte[] dob = { 0x10, 0x00, 0x30, 0x00, 0x44, 0x41 };
-            byte[] mf = { 0x10, 0x00, 0x40, 0x00, 0x43, 0x53 };
+            //byte[] dob = { 0x10, 0x00, 0x30, 0x00, 0x44, 0x41 };
+            //byte[] mf = { 0x10, 0x00, 0x40, 0x00, 0x43, 0x53 };
             //byte[] loc = { 0x08, 0x00, 0x80, 0x00, 0x4c, 0x4f };
 
             string dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
@@ -334,27 +338,32 @@ namespace Case_QRCode
                 return;  // we've got the wrong file...
             }
 
-            string rawText;
-            rawText = getDicomString(readBuffer, date, bytesRead);
+            
+            string rawText = getDicomString(readBuffer, date, bytesRead);
             string studyDate = convertDate(rawText);
 
-            string accnum = getDicomString(readBuffer, acc, bytesRead);
-            rawText = getDicomString(readBuffer, desc, bytesRead);
-            string studyDesc = rawText.Replace("^", " ");
+            //string accnum = getDicomString(readBuffer, acc, bytesRead);
+
+            string studyDesc = "";
+            if (correct_accession)
+            {
+                rawText = getDicomString(readBuffer, desc, bytesRead);
+                studyDesc = rawText.Replace("^", " ");
+            }
 
             rawText = getDicomString(readBuffer, pn, bytesRead);
             textName.Text = rawText.Replace("^", " ");
 
-            rawText = getDicomString(readBuffer, dob, bytesRead);
-            textDOB.Text = convertDate(rawText);
+            //rawText = getDicomString(readBuffer, dob, bytesRead);
+            //string txtDOB = convertDate(rawText);
 
-            textGender.Text = getDicomString(readBuffer, mf, bytesRead);
+            //string txtGender = getDicomString(readBuffer, mf, bytesRead);
 
-            txtEncodeData.Text = textName.Text + " "
-                + textMRN.Text + " "
-                + studyDesc + " "
-                + studyDate + " "
-                + textLoc.Text;
+            txtEncodeData.Text = textName.Text+"; "
+                + textMRN.Text + "; "
+                + studyDesc + "; "
+                + studyDate + "; "
+                + textLoc.Text+"; ";
             GenerateQRCode();
 
         }

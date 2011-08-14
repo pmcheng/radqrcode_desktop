@@ -31,14 +31,9 @@
             this.pb = new System.Windows.Forms.PictureBox();
             this.imagePanel = new System.Windows.Forms.Panel();
             this.label = new System.Windows.Forms.Label();
-            this.labelDOB = new System.Windows.Forms.Label();
-            this.labelMRN = new System.Windows.Forms.Label();
-            this.labelGender = new System.Windows.Forms.Label();
             this.labelLoc = new System.Windows.Forms.Label();
             this.textName = new System.Windows.Forms.TextBox();
-            this.textDOB = new System.Windows.Forms.TextBox();
             this.textMRN = new System.Windows.Forms.TextBox();
-            this.textGender = new System.Windows.Forms.TextBox();
             this.textLoc = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -57,6 +52,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.cbNetwork = new System.Windows.Forms.CheckBox();
+            this.labelMRN = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pb)).BeginInit();
             this.imagePanel.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -101,37 +97,10 @@
             this.label.TabIndex = 2;
             this.label.Text = "Name";
             // 
-            // labelDOB
-            // 
-            this.labelDOB.AutoSize = true;
-            this.labelDOB.Location = new System.Drawing.Point(10, 40);
-            this.labelDOB.Name = "labelDOB";
-            this.labelDOB.Size = new System.Drawing.Size(30, 13);
-            this.labelDOB.TabIndex = 3;
-            this.labelDOB.Text = "DOB";
-            // 
-            // labelMRN
-            // 
-            this.labelMRN.AutoSize = true;
-            this.labelMRN.Location = new System.Drawing.Point(131, 38);
-            this.labelMRN.Name = "labelMRN";
-            this.labelMRN.Size = new System.Drawing.Size(32, 13);
-            this.labelMRN.TabIndex = 4;
-            this.labelMRN.Text = "MRN";
-            // 
-            // labelGender
-            // 
-            this.labelGender.AutoSize = true;
-            this.labelGender.Location = new System.Drawing.Point(9, 63);
-            this.labelGender.Name = "labelGender";
-            this.labelGender.Size = new System.Drawing.Size(42, 13);
-            this.labelGender.TabIndex = 5;
-            this.labelGender.Text = "Gender";
-            // 
             // labelLoc
             // 
             this.labelLoc.AutoSize = true;
-            this.labelLoc.Location = new System.Drawing.Point(131, 63);
+            this.labelLoc.Location = new System.Drawing.Point(134, 39);
             this.labelLoc.Name = "labelLoc";
             this.labelLoc.Size = new System.Drawing.Size(25, 13);
             this.labelLoc.TabIndex = 6;
@@ -144,30 +113,16 @@
             this.textName.Size = new System.Drawing.Size(192, 20);
             this.textName.TabIndex = 7;
             // 
-            // textDOB
-            // 
-            this.textDOB.Location = new System.Drawing.Point(51, 35);
-            this.textDOB.Name = "textDOB";
-            this.textDOB.Size = new System.Drawing.Size(65, 20);
-            this.textDOB.TabIndex = 8;
-            // 
             // textMRN
             // 
-            this.textMRN.Location = new System.Drawing.Point(166, 35);
+            this.textMRN.Location = new System.Drawing.Point(51, 36);
             this.textMRN.Name = "textMRN";
             this.textMRN.Size = new System.Drawing.Size(77, 20);
             this.textMRN.TabIndex = 9;
             // 
-            // textGender
-            // 
-            this.textGender.Location = new System.Drawing.Point(51, 60);
-            this.textGender.Name = "textGender";
-            this.textGender.Size = new System.Drawing.Size(24, 20);
-            this.textGender.TabIndex = 10;
-            // 
             // textLoc
             // 
-            this.textLoc.Location = new System.Drawing.Point(166, 61);
+            this.textLoc.Location = new System.Drawing.Point(166, 36);
             this.textLoc.Name = "textLoc";
             this.textLoc.Size = new System.Drawing.Size(77, 20);
             this.textLoc.TabIndex = 11;
@@ -188,12 +143,8 @@
             this.tabPage1.Controls.Add(this.txtEncodeData);
             this.tabPage1.Controls.Add(this.label);
             this.tabPage1.Controls.Add(this.textLoc);
-            this.tabPage1.Controls.Add(this.labelDOB);
-            this.tabPage1.Controls.Add(this.textGender);
             this.tabPage1.Controls.Add(this.labelMRN);
             this.tabPage1.Controls.Add(this.textMRN);
-            this.tabPage1.Controls.Add(this.labelGender);
-            this.tabPage1.Controls.Add(this.textDOB);
             this.tabPage1.Controls.Add(this.labelLoc);
             this.tabPage1.Controls.Add(this.textName);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -207,7 +158,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 91);
+            this.label1.Location = new System.Drawing.Point(15, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(30, 13);
             this.label1.TabIndex = 13;
@@ -215,10 +166,10 @@
             // 
             // txtEncodeData
             // 
-            this.txtEncodeData.Location = new System.Drawing.Point(51, 87);
+            this.txtEncodeData.Location = new System.Drawing.Point(51, 62);
             this.txtEncodeData.Multiline = true;
             this.txtEncodeData.Name = "txtEncodeData";
-            this.txtEncodeData.Size = new System.Drawing.Size(192, 76);
+            this.txtEncodeData.Size = new System.Drawing.Size(192, 101);
             this.txtEncodeData.TabIndex = 12;
             // 
             // tabPage2
@@ -406,6 +357,15 @@
             this.cbNetwork.Text = "Network Retrieve";
             this.cbNetwork.UseVisualStyleBackColor = true;
             // 
+            // labelMRN
+            // 
+            this.labelMRN.AutoSize = true;
+            this.labelMRN.Location = new System.Drawing.Point(13, 38);
+            this.labelMRN.Name = "labelMRN";
+            this.labelMRN.Size = new System.Drawing.Size(32, 13);
+            this.labelMRN.TabIndex = 4;
+            this.labelMRN.Text = "MRN";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -438,14 +398,9 @@
         private System.Windows.Forms.PictureBox pb;
         private System.Windows.Forms.Panel imagePanel;
         private System.Windows.Forms.Label label;
-        private System.Windows.Forms.Label labelDOB;
-        private System.Windows.Forms.Label labelMRN;
-        private System.Windows.Forms.Label labelGender;
         private System.Windows.Forms.Label labelLoc;
         private System.Windows.Forms.TextBox textName;
-        private System.Windows.Forms.TextBox textDOB;
         private System.Windows.Forms.TextBox textMRN;
-        private System.Windows.Forms.TextBox textGender;
         private System.Windows.Forms.TextBox textLoc;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
@@ -464,6 +419,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.CheckBox cbNetwork;
+        private System.Windows.Forms.Label labelMRN;
     }
 }
 
