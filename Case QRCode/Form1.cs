@@ -100,13 +100,13 @@ namespace Case_QRCode
         private void imagePanel_DragDrop(object sender, DragEventArgs e)
         {
             if (!validData) return;
-            string mrn = "";
+            string medrecnum = "";
             MemoryStream ms = e.Data.GetData("Synapse.FujiOffset") as MemoryStream;
             StreamReader sr;
             if (ms != null)
             {
                 sr = new StreamReader(ms, Encoding.Unicode);
-                mrn = sr.ReadToEnd().TrimEnd('\0');
+                medrecnum = sr.ReadToEnd().TrimEnd('\0');
             }
             if (cbNetwork.Checked)
             {
@@ -212,7 +212,7 @@ namespace Case_QRCode
                     //string outputfile = Path.Combine(Path.GetTempPath(), "temp.txt");
                     //Run("dcmdump.exe", "", dcmfile, outputfile);
                     //textBoxLine(File.ReadAllText(outputfile));
-                    getDemographics(dcmfile, mrn, true);
+                    getDemographics(dcmfile, medrecnum, true);
                     File.Delete(dcmfile);
                     //Clipboard.SetText(textBoxStatus.Text);
                 }
@@ -257,20 +257,24 @@ namespace Case_QRCode
                 }
 
                 ArrayList results = WebCacheTool.WinInetAPI.FindUrlCacheEntries(@"/\d\.\d.*\)$");
-                DateTime latest = DateTime.MinValue;
-                DateTime current = DateTime.MinValue;
                 string fname = "";
+                
+                byte[] readBuffer = new byte[4096];
+                int bytesRead;
+
+                byte[] mrn = { 0x10, 0x00, 0x20, 0x00, 0x4c, 0x4f };
+                byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
+                string accnum = "";
+                string dicom_mrn = "";
+
                 if (accession != "")
-                {
-                    byte[] readBuffer = new byte[4096];
-                    byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
-                    string accnum = "";
+                {                  
                     foreach (WebCacheTool.WinInetAPI.INTERNET_CACHE_ENTRY_INFO entry in results)
                     {
                         fname = entry.lpszLocalFileName;
                         using (Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read))
                         {
-                            int bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
+                            bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
                             accnum = getDicomString(readBuffer, acc, bytesRead);
                             if (accnum == accession) break;
                         }
@@ -281,21 +285,24 @@ namespace Case_QRCode
                         accession = "";
                     }
                 }
-                if (fname=="")
+                if ((fname=="") && (medrecnum!=""))
                 {
                     foreach (WebCacheTool.WinInetAPI.INTERNET_CACHE_ENTRY_INFO entry in results)
                     {
-                        current = WebCacheTool.Win32API.FromFileTime(entry.LastAccessTime);
-                        if (latest < current)
+                        fname = entry.lpszLocalFileName;
+                        using (Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read))
                         {
-                            fname = entry.lpszLocalFileName;
-                            latest = current;
+                            bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
+                            dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
+                            if (dicom_mrn == medrecnum) break;
                         }
-
+                    }
+                    if (dicom_mrn != medrecnum)
+                    {
+                        return;
                     }
                 }
-                if (fname != "")
-                    getDemographics(fname, mrn, accession!="");
+                if (fname!="") getDemographics(fname, medrecnum, accession!="");
             }
 
         }
@@ -339,14 +346,14 @@ namespace Case_QRCode
             }
 
             
-            string rawText = getDicomString(readBuffer, date, bytesRead);
-            string studyDate = convertDate(rawText);
-
             //string accnum = getDicomString(readBuffer, acc, bytesRead);
-
+            string rawText = "";
+            string studyDate = "";
             string studyDesc = "";
             if (correct_accession)
             {
+                rawText = getDicomString(readBuffer, date, bytesRead);
+                studyDate= convertDate(rawText);
                 rawText = getDicomString(readBuffer, desc, bytesRead);
                 studyDesc = rawText.Replace("^", " ");
             }
