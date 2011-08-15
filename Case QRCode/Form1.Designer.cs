@@ -39,6 +39,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
             this.txtEncodeData = new System.Windows.Forms.TextBox();
+            this.labelMRN = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.txtSize = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -52,7 +53,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.cbNetwork = new System.Windows.Forms.CheckBox();
-            this.labelMRN = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pb)).BeginInit();
             this.imagePanel.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -64,9 +64,9 @@
             // pb
             // 
             this.pb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pb.Location = new System.Drawing.Point(10, 10);
+            this.pb.Location = new System.Drawing.Point(20, 20);
             this.pb.Name = "pb";
-            this.pb.Size = new System.Drawing.Size(276, 276);
+            this.pb.Size = new System.Drawing.Size(256, 256);
             this.pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pb.TabIndex = 0;
             this.pb.TabStop = false;
@@ -82,7 +82,7 @@
             this.imagePanel.Controls.Add(this.pb);
             this.imagePanel.Location = new System.Drawing.Point(275, 7);
             this.imagePanel.Name = "imagePanel";
-            this.imagePanel.Padding = new System.Windows.Forms.Padding(10);
+            this.imagePanel.Padding = new System.Windows.Forms.Padding(20);
             this.imagePanel.Size = new System.Drawing.Size(300, 300);
             this.imagePanel.TabIndex = 1;
             this.imagePanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.imagePanel_DragDrop);
@@ -171,6 +171,15 @@
             this.txtEncodeData.Name = "txtEncodeData";
             this.txtEncodeData.Size = new System.Drawing.Size(192, 101);
             this.txtEncodeData.TabIndex = 12;
+            // 
+            // labelMRN
+            // 
+            this.labelMRN.AutoSize = true;
+            this.labelMRN.Location = new System.Drawing.Point(13, 38);
+            this.labelMRN.Name = "labelMRN";
+            this.labelMRN.Size = new System.Drawing.Size(32, 13);
+            this.labelMRN.TabIndex = 4;
+            this.labelMRN.Text = "MRN";
             // 
             // tabPage2
             // 
@@ -356,15 +365,6 @@
             this.cbNetwork.TabIndex = 15;
             this.cbNetwork.Text = "Network Retrieve";
             this.cbNetwork.UseVisualStyleBackColor = true;
-            // 
-            // labelMRN
-            // 
-            this.labelMRN.AutoSize = true;
-            this.labelMRN.Location = new System.Drawing.Point(13, 38);
-            this.labelMRN.Name = "labelMRN";
-            this.labelMRN.Size = new System.Drawing.Size(32, 13);
-            this.labelMRN.TabIndex = 4;
-            this.labelMRN.Text = "MRN";
             // 
             // Form1
             // 
