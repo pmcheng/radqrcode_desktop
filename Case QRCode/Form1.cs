@@ -452,8 +452,16 @@ namespace Case_QRCode
 
             Image image;
             String data = txtEncodeData.Text;
-            image = qrCodeEncoder.Encode(data);
-            pb.Image = image;
+            try
+            {
+                image = qrCodeEncoder.Encode(data);
+                pb.Image = image;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+            
 
         }
 
