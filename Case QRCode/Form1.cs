@@ -149,21 +149,21 @@ namespace Case_QRCode
                     string downloadURL;
 
                     string querystr;
-                    if (datasource.Contains("lacsynapse"))
-                    {
-                        querystr = @"cmd=select s.http_url||iv.filename as httpfile,
-                                               s.https_url||iv.filename as httpsfile,
-                                               iv.offset as offset,iv.length as length
-                                               from image_version iv, 
-                                                 storage s, 
-                                                 compression c
-                                               where iv.storage_uid=s.id and 
-                                                 c.aon_name='Original' and 
-                                                 c.id=iv.compression_uid and
-                                                 iv.image_uid=" + imageUID + "&";
-                    }
-                    else
-                    {
+//                    if (datasource.Contains("lacsynapse"))
+//                    {
+//                        querystr = @"cmd=select s.http_url||iv.filename as httpfile,
+//                                               s.https_url||iv.filename as httpsfile,
+//                                               iv.offset as offset,iv.length as length
+//                                               from image_version iv, 
+//                                                 storage s, 
+//                                                 compression c
+//                                               where iv.storage_uid=s.id and 
+//                                                 c.aon_name='Original' and 
+//                                                 c.id=iv.compression_uid and
+//                                                 iv.image_uid=" + imageUID + "&";
+//                    }
+//                    else
+//                    {
                         querystr = @"cmd=select s.http_url||iv.filename as httpfile,
                                                s.https_url||iv.filename as httpsfile,
                                                iv.offset as offset,iv.length as length
@@ -174,7 +174,7 @@ namespace Case_QRCode
                                                  c.aon_name_us='Original' and 
                                                  c.id=iv.compression_uid and
                                                  iv.image_uid=" + imageUID + "&";
-                    }
+//                    }
 
 
                     byte[] result = retrieveRDS(uriFujiRDS, querystr);
