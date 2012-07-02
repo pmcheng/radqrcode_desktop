@@ -30,15 +30,18 @@
         {
             this.pb = new System.Windows.Forms.PictureBox();
             this.imagePanel = new System.Windows.Forms.Panel();
-            this.label = new System.Windows.Forms.Label();
             this.labelLoc = new System.Windows.Forms.Label();
-            this.textName = new System.Windows.Forms.TextBox();
             this.textMRN = new System.Windows.Forms.TextBox();
             this.textLoc = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textStudy = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textDate = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textEncode = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtEncodeData = new System.Windows.Forms.TextBox();
+            this.textDesc = new System.Windows.Forms.TextBox();
             this.labelMRN = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.txtSize = new System.Windows.Forms.TextBox();
@@ -47,18 +50,21 @@
             this.cboVersion = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cboCorrectionLevel = new System.Windows.Forms.ComboBox();
-            this.btnGenerate = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.cbNetwork = new System.Windows.Forms.CheckBox();
+            this.btnGenerate = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pb)).BeginInit();
             this.imagePanel.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pb
@@ -66,7 +72,7 @@
             this.pb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pb.Location = new System.Drawing.Point(20, 20);
             this.pb.Name = "pb";
-            this.pb.Size = new System.Drawing.Size(256, 256);
+            this.pb.Size = new System.Drawing.Size(340, 340);
             this.pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pb.TabIndex = 0;
             this.pb.TabStop = false;
@@ -80,52 +86,38 @@
             this.imagePanel.BackColor = System.Drawing.Color.White;
             this.imagePanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.imagePanel.Controls.Add(this.pb);
-            this.imagePanel.Location = new System.Drawing.Point(275, 7);
+            this.imagePanel.Location = new System.Drawing.Point(275, 6);
             this.imagePanel.Name = "imagePanel";
             this.imagePanel.Padding = new System.Windows.Forms.Padding(20);
-            this.imagePanel.Size = new System.Drawing.Size(300, 300);
+            this.imagePanel.Size = new System.Drawing.Size(384, 384);
             this.imagePanel.TabIndex = 1;
             this.imagePanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.imagePanel_DragDrop);
             this.imagePanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.imagePanel_DragEnter);
             // 
-            // label
-            // 
-            this.label.AutoSize = true;
-            this.label.Location = new System.Drawing.Point(10, 13);
-            this.label.Name = "label";
-            this.label.Size = new System.Drawing.Size(35, 13);
-            this.label.TabIndex = 2;
-            this.label.Text = "Name";
-            // 
             // labelLoc
             // 
             this.labelLoc.AutoSize = true;
-            this.labelLoc.Location = new System.Drawing.Point(134, 39);
+            this.labelLoc.Location = new System.Drawing.Point(135, 13);
             this.labelLoc.Name = "labelLoc";
             this.labelLoc.Size = new System.Drawing.Size(25, 13);
             this.labelLoc.TabIndex = 6;
             this.labelLoc.Text = "Loc";
             // 
-            // textName
-            // 
-            this.textName.Location = new System.Drawing.Point(51, 10);
-            this.textName.Name = "textName";
-            this.textName.Size = new System.Drawing.Size(192, 20);
-            this.textName.TabIndex = 7;
-            // 
             // textMRN
             // 
-            this.textMRN.Location = new System.Drawing.Point(51, 36);
+            this.textMRN.Location = new System.Drawing.Point(44, 10);
             this.textMRN.Name = "textMRN";
-            this.textMRN.Size = new System.Drawing.Size(77, 20);
+            this.textMRN.Size = new System.Drawing.Size(84, 20);
             this.textMRN.TabIndex = 9;
+            this.textMRN.TextChanged += new System.EventHandler(this.textMRN_TextChanged);
             // 
             // textLoc
             // 
-            this.textLoc.Location = new System.Drawing.Point(166, 36);
+            this.textLoc.Location = new System.Drawing.Point(167, 10);
             this.textLoc.Name = "textLoc";
-            this.textLoc.Size = new System.Drawing.Size(77, 20);
+            this.textLoc.Size = new System.Drawing.Size(76, 20);
             this.textLoc.TabIndex = 11;
+            this.textLoc.TextChanged += new System.EventHandler(this.textLoc_TextChanged);
             // 
             // tabControl1
             // 
@@ -134,48 +126,95 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 72);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(257, 195);
+            this.tabControl1.Size = new System.Drawing.Size(257, 319);
             this.tabControl1.TabIndex = 12;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.textStudy);
+            this.tabPage1.Controls.Add(this.label8);
+            this.tabPage1.Controls.Add(this.textDate);
+            this.tabPage1.Controls.Add(this.label7);
+            this.tabPage1.Controls.Add(this.textEncode);
             this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.txtEncodeData);
-            this.tabPage1.Controls.Add(this.label);
+            this.tabPage1.Controls.Add(this.textDesc);
             this.tabPage1.Controls.Add(this.textLoc);
             this.tabPage1.Controls.Add(this.labelMRN);
             this.tabPage1.Controls.Add(this.textMRN);
             this.tabPage1.Controls.Add(this.labelLoc);
-            this.tabPage1.Controls.Add(this.textName);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(249, 169);
+            this.tabPage1.Size = new System.Drawing.Size(249, 293);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Data";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // textStudy
+            // 
+            this.textStudy.Location = new System.Drawing.Point(159, 35);
+            this.textStudy.Name = "textStudy";
+            this.textStudy.Size = new System.Drawing.Size(84, 20);
+            this.textStudy.TabIndex = 18;
+            this.textStudy.TextChanged += new System.EventHandler(this.textStudy_TextChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(123, 40);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(34, 13);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Study";
+            // 
+            // textDate
+            // 
+            this.textDate.Location = new System.Drawing.Point(44, 37);
+            this.textDate.Name = "textDate";
+            this.textDate.Size = new System.Drawing.Size(73, 20);
+            this.textDate.TabIndex = 16;
+            this.textDate.TextChanged += new System.EventHandler(this.textDate_TextChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 38);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(30, 13);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Date";
+            // 
+            // textEncode
+            // 
+            this.textEncode.Location = new System.Drawing.Point(6, 173);
+            this.textEncode.Multiline = true;
+            this.textEncode.Name = "textEncode";
+            this.textEncode.ReadOnly = true;
+            this.textEncode.Size = new System.Drawing.Size(237, 114);
+            this.textEncode.TabIndex = 14;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 65);
+            this.label1.Location = new System.Drawing.Point(6, 65);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 13);
+            this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 13;
-            this.label1.Text = "Data";
+            this.label1.Text = "Desc";
             // 
-            // txtEncodeData
+            // textDesc
             // 
-            this.txtEncodeData.Location = new System.Drawing.Point(51, 62);
-            this.txtEncodeData.Multiline = true;
-            this.txtEncodeData.Name = "txtEncodeData";
-            this.txtEncodeData.Size = new System.Drawing.Size(192, 101);
-            this.txtEncodeData.TabIndex = 12;
+            this.textDesc.Location = new System.Drawing.Point(44, 62);
+            this.textDesc.Multiline = true;
+            this.textDesc.Name = "textDesc";
+            this.textDesc.Size = new System.Drawing.Size(199, 105);
+            this.textDesc.TabIndex = 12;
+            this.textDesc.TextChanged += new System.EventHandler(this.textDesc_TextChanged);
             // 
             // labelMRN
             // 
             this.labelMRN.AutoSize = true;
-            this.labelMRN.Location = new System.Drawing.Point(13, 38);
+            this.labelMRN.Location = new System.Drawing.Point(6, 13);
             this.labelMRN.Name = "labelMRN";
             this.labelMRN.Size = new System.Drawing.Size(32, 13);
             this.labelMRN.TabIndex = 4;
@@ -186,13 +225,14 @@
             this.tabPage2.Controls.Add(this.txtSize);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.btnGenerate);
             this.tabPage2.Controls.Add(this.cboVersion);
             this.tabPage2.Controls.Add(this.label2);
             this.tabPage2.Controls.Add(this.cboCorrectionLevel);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(249, 169);
+            this.tabPage2.Size = new System.Drawing.Size(249, 263);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "QR Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -295,16 +335,6 @@
             this.cboCorrectionLevel.Size = new System.Drawing.Size(66, 21);
             this.cboCorrectionLevel.TabIndex = 0;
             // 
-            // btnGenerate
-            // 
-            this.btnGenerate.Location = new System.Drawing.Point(93, 282);
-            this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(97, 23);
-            this.btnGenerate.TabIndex = 13;
-            this.btnGenerate.Text = "Generate Code";
-            this.btnGenerate.UseVisualStyleBackColor = true;
-            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -366,17 +396,43 @@
             this.cbNetwork.Text = "Network Retrieve";
             this.cbNetwork.UseVisualStyleBackColor = true;
             // 
+            // btnGenerate
+            // 
+            this.btnGenerate.Location = new System.Drawing.Point(74, 173);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(97, 23);
+            this.btnGenerate.TabIndex = 13;
+            this.btnGenerate.Text = "Generate Code";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 401);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(668, 22);
+            this.statusStrip1.TabIndex = 16;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripLabel
+            // 
+            this.toolStripLabel.Name = "toolStripLabel";
+            this.toolStripLabel.Size = new System.Drawing.Size(49, 17);
+            this.toolStripLabel.Text = "              ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 319);
+            this.ClientSize = new System.Drawing.Size(668, 423);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.cbNetwork);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.imagePanel);
-            this.MinimumSize = new System.Drawing.Size(592, 346);
+            this.MinimumSize = new System.Drawing.Size(676, 450);
             this.Name = "Form1";
             this.Text = "Case QRCode";
             ((System.ComponentModel.ISupportInitialize)(this.pb)).EndInit();
@@ -388,6 +444,8 @@
             this.tabPage2.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -397,17 +455,14 @@
 
         private System.Windows.Forms.PictureBox pb;
         private System.Windows.Forms.Panel imagePanel;
-        private System.Windows.Forms.Label label;
         private System.Windows.Forms.Label labelLoc;
-        private System.Windows.Forms.TextBox textName;
         private System.Windows.Forms.TextBox textMRN;
         private System.Windows.Forms.TextBox textLoc;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button btnGenerate;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtEncodeData;
+        private System.Windows.Forms.TextBox textDesc;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cboCorrectionLevel;
         private System.Windows.Forms.TextBox txtSize;
@@ -420,6 +475,14 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.CheckBox cbNetwork;
         private System.Windows.Forms.Label labelMRN;
+        private System.Windows.Forms.TextBox textStudy;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textDate;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textEncode;
+        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripLabel;
     }
 }
 

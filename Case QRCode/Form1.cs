@@ -21,12 +21,13 @@ namespace Case_QRCode
     {
         bool validData;
         string dragFilename = "";
+        bool preventGenerateCode = false;
         CredentialCache myCredentialCache;
 
         Dictionary<string, string> dictLocation = new Dictionary<string, string>()
         {
-            {"datasource=https%253A%252F%252Fexternal.synapse.uscuh.com", "UH/Norris"},
-            {"datasource=http%253A%252F%252Fsynapse.uscuh.com", "UH/Norris"},
+            {"datasource=https%253A%252F%252Fexternal.synapse.uscuh.com", "Keck/Norris"},
+            {"datasource=http%253A%252F%252Fsynapse.uscuh.com", "Keck/Norris"},
             {"datasource=https%253A%252F%252Ffujipacs.hsc.usc.edu","HCC2"},
             {"datasource=http%253A%252F%252Fhcc2synvweb","HCC2"},
             {"datasource=http%253A%252F%252Flacsynapse","LACUSC"}
@@ -38,12 +39,14 @@ namespace Case_QRCode
             InitializeComponent();
 
             Assembly asm = Assembly.GetExecutingAssembly();
+
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime compileDate = new DateTime(v.Build * TimeSpan.TicksPerDay + v.Revision * TimeSpan.TicksPerSecond * 2).AddYears(1999);
+            DateTime compileDate = new DateTime(2000, 1, 1).Add(new TimeSpan(v.Build * TimeSpan.TicksPerDay + v.Revision * TimeSpan.TicksPerSecond * 2));
             if (TimeZone.IsDaylightSavingTime(compileDate, TimeZone.CurrentTimeZone.GetDaylightChanges(compileDate.Year)))
             {
                 compileDate = compileDate.AddHours(1);
             }
+
             this.labelVersion.Text = String.Format("Build {0}", compileDate);
 
 
@@ -319,6 +322,7 @@ namespace Case_QRCode
 
         void getDemographics(string fname, string medrecnum, bool correct_accession)
         {
+            preventGenerateCode = true;
 
             Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
@@ -348,31 +352,31 @@ namespace Case_QRCode
             
             //string accnum = getDicomString(readBuffer, acc, bytesRead);
             string rawText = "";
-            string studyDate = "";
-            string studyDesc = "";
+            //string studyDate = "";
+            //string studyDesc = "";
             if (correct_accession)
             {
                 rawText = getDicomString(readBuffer, date, bytesRead);
-                studyDate= convertDate(rawText);
+                textDate.Text= convertDate(rawText);
                 rawText = getDicomString(readBuffer, desc, bytesRead);
-                studyDesc = rawText.Replace("^", " ");
+                textStudy.Text = rawText.Replace("^", " ");
             }
 
-            rawText = getDicomString(readBuffer, pn, bytesRead);
-            textName.Text = rawText.Replace("^", " ");
+            //rawText = getDicomString(readBuffer, pn, bytesRead);
+            //textName.Text = rawText.Replace("^", " ");
 
             //rawText = getDicomString(readBuffer, dob, bytesRead);
             //string txtDOB = convertDate(rawText);
 
             //string txtGender = getDicomString(readBuffer, mf, bytesRead);
+            EncodeData();
 
-            txtEncodeData.Text = textName.Text+"; "
-                + textMRN.Text + "; "
-                + studyDesc + "; "
-                + studyDate + "; "
-                + textLoc.Text+"; ";
+            preventGenerateCode = false;
+        }
+
+        private void EncodeData()
+        {
             GenerateQRCode();
-
         }
 
         string mapToLocation(string URL)
@@ -451,15 +455,21 @@ namespace Case_QRCode
                 qrCodeEncoder.QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.H;
 
             Image image;
-            String data = txtEncodeData.Text;
             try
             {
+                string[] stringList ={textLoc.Text,
+                textMRN.Text, textDate.Text, textStudy.Text, textDesc.Text};
+                String data = string.Join("|", stringList);
+
                 image = qrCodeEncoder.Encode(data);
                 pb.Image = image;
+                textEncode.Text=data;
+                toolStripLabel.Text = "";
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString());
+                toolStripLabel.Text = e.Message.ToString();
+                //MessageBox.Show(e.ToString());
             }
             
 
@@ -467,7 +477,7 @@ namespace Case_QRCode
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-            GenerateQRCode();
+            EncodeData();
         }
 
         private byte[] retrieveRDS(Uri uriRDS, string query)
@@ -578,6 +588,31 @@ namespace Case_QRCode
 
             // error occured, return false
             return false;
+        }
+
+        private void textDesc_TextChanged(object sender, EventArgs e)
+        {
+            if (!preventGenerateCode) EncodeData();
+        }
+
+        private void textMRN_TextChanged(object sender, EventArgs e)
+        {
+            if (!preventGenerateCode) EncodeData();
+        }
+
+        private void textLoc_TextChanged(object sender, EventArgs e)
+        {
+            if (!preventGenerateCode) EncodeData();
+        }
+
+        private void textDate_TextChanged(object sender, EventArgs e)
+        {
+            if (!preventGenerateCode) EncodeData();
+        }
+
+        private void textStudy_TextChanged(object sender, EventArgs e)
+        {
+            if (!preventGenerateCode) EncodeData();
         }
 
     }
