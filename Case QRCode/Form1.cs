@@ -393,10 +393,10 @@ namespace Case_QRCode
         {
             if (strDate.Length == 8)
             {
-                //reformat to MM-DD-YYYY
-                strDate = strDate.Substring(4, 2) + "/" +
-                    strDate.Substring(6, 2) + "/" +
-                    strDate.Substring(0, 4);
+                //reformat to YYYY-MM-DD
+                strDate = strDate.Substring(0, 4) +"-"+
+                    strDate.Substring(4, 2) + "-" +
+                    strDate.Substring(6, 2);
             }
             return strDate;
         }
@@ -457,8 +457,9 @@ namespace Case_QRCode
             Image image;
             try
             {
-                string[] stringList ={textLoc.Text,
-                textMRN.Text, textDate.Text, textStudy.Text, textDesc.Text};
+                string[] stringList ={textLoc.Text, textMRN.Text, textStudy.Text, textDate.Text, 
+                                         textDesc.Text, checkBoxFollow.Checked?"1":"0"};
+                
                 String data = string.Join("|", stringList);
 
                 image = qrCodeEncoder.Encode(data);
@@ -611,6 +612,11 @@ namespace Case_QRCode
         }
 
         private void textStudy_TextChanged(object sender, EventArgs e)
+        {
+            if (!preventGenerateCode) EncodeData();
+        }
+
+        private void checkBoxFollow_CheckedChanged(object sender, EventArgs e)
         {
             if (!preventGenerateCode) EncodeData();
         }

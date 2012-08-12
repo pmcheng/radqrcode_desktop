@@ -35,6 +35,7 @@
             this.textLoc = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.checkBoxFollow = new System.Windows.Forms.CheckBox();
             this.textStudy = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.textDate = new System.Windows.Forms.TextBox();
@@ -47,6 +48,7 @@
             this.txtSize = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.btnGenerate = new System.Windows.Forms.Button();
             this.cboVersion = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cboCorrectionLevel = new System.Windows.Forms.ComboBox();
@@ -55,7 +57,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.cbNetwork = new System.Windows.Forms.CheckBox();
-            this.btnGenerate = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pb)).BeginInit();
@@ -108,7 +109,7 @@
             this.textMRN.Location = new System.Drawing.Point(44, 10);
             this.textMRN.Name = "textMRN";
             this.textMRN.Size = new System.Drawing.Size(84, 20);
-            this.textMRN.TabIndex = 9;
+            this.textMRN.TabIndex = 0;
             this.textMRN.TextChanged += new System.EventHandler(this.textMRN_TextChanged);
             // 
             // textLoc
@@ -116,7 +117,7 @@
             this.textLoc.Location = new System.Drawing.Point(167, 10);
             this.textLoc.Name = "textLoc";
             this.textLoc.Size = new System.Drawing.Size(76, 20);
-            this.textLoc.TabIndex = 11;
+            this.textLoc.TabIndex = 1;
             this.textLoc.TextChanged += new System.EventHandler(this.textLoc_TextChanged);
             // 
             // tabControl1
@@ -131,6 +132,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.checkBoxFollow);
             this.tabPage1.Controls.Add(this.textStudy);
             this.tabPage1.Controls.Add(this.label8);
             this.tabPage1.Controls.Add(this.textDate);
@@ -150,12 +152,23 @@
             this.tabPage1.Text = "Data";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // checkBoxFollow
+            // 
+            this.checkBoxFollow.AutoSize = true;
+            this.checkBoxFollow.Location = new System.Drawing.Point(48, 172);
+            this.checkBoxFollow.Name = "checkBoxFollow";
+            this.checkBoxFollow.Size = new System.Drawing.Size(77, 17);
+            this.checkBoxFollow.TabIndex = 5;
+            this.checkBoxFollow.Text = "Follow-up?";
+            this.checkBoxFollow.UseVisualStyleBackColor = true;
+            this.checkBoxFollow.CheckedChanged += new System.EventHandler(this.checkBoxFollow_CheckedChanged);
+            // 
             // textStudy
             // 
             this.textStudy.Location = new System.Drawing.Point(159, 35);
             this.textStudy.Name = "textStudy";
             this.textStudy.Size = new System.Drawing.Size(84, 20);
-            this.textStudy.TabIndex = 18;
+            this.textStudy.TabIndex = 3;
             this.textStudy.TextChanged += new System.EventHandler(this.textStudy_TextChanged);
             // 
             // label8
@@ -172,7 +185,7 @@
             this.textDate.Location = new System.Drawing.Point(44, 37);
             this.textDate.Name = "textDate";
             this.textDate.Size = new System.Drawing.Size(73, 20);
-            this.textDate.TabIndex = 16;
+            this.textDate.TabIndex = 2;
             this.textDate.TextChanged += new System.EventHandler(this.textDate_TextChanged);
             // 
             // label7
@@ -186,17 +199,18 @@
             // 
             // textEncode
             // 
-            this.textEncode.Location = new System.Drawing.Point(6, 173);
+            this.textEncode.Location = new System.Drawing.Point(6, 193);
             this.textEncode.Multiline = true;
             this.textEncode.Name = "textEncode";
             this.textEncode.ReadOnly = true;
-            this.textEncode.Size = new System.Drawing.Size(237, 114);
+            this.textEncode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textEncode.Size = new System.Drawing.Size(237, 94);
             this.textEncode.TabIndex = 14;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 65);
+            this.label1.Location = new System.Drawing.Point(6, 66);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 13;
@@ -204,11 +218,11 @@
             // 
             // textDesc
             // 
-            this.textDesc.Location = new System.Drawing.Point(44, 62);
+            this.textDesc.Location = new System.Drawing.Point(44, 63);
             this.textDesc.Multiline = true;
             this.textDesc.Name = "textDesc";
-            this.textDesc.Size = new System.Drawing.Size(199, 105);
-            this.textDesc.TabIndex = 12;
+            this.textDesc.Size = new System.Drawing.Size(199, 104);
+            this.textDesc.TabIndex = 4;
             this.textDesc.TextChanged += new System.EventHandler(this.textDesc_TextChanged);
             // 
             // labelMRN
@@ -232,7 +246,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(249, 263);
+            this.tabPage2.Size = new System.Drawing.Size(249, 293);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "QR Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -261,6 +275,16 @@
             this.label3.Size = new System.Drawing.Size(42, 13);
             this.label3.TabIndex = 3;
             this.label3.Text = "Version";
+            // 
+            // btnGenerate
+            // 
+            this.btnGenerate.Location = new System.Drawing.Point(74, 173);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(97, 23);
+            this.btnGenerate.TabIndex = 13;
+            this.btnGenerate.Text = "Generate Code";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
             // 
             // cboVersion
             // 
@@ -396,16 +420,6 @@
             this.cbNetwork.Text = "Network Retrieve";
             this.cbNetwork.UseVisualStyleBackColor = true;
             // 
-            // btnGenerate
-            // 
-            this.btnGenerate.Location = new System.Drawing.Point(74, 173);
-            this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(97, 23);
-            this.btnGenerate.TabIndex = 13;
-            this.btnGenerate.Text = "Generate Code";
-            this.btnGenerate.UseVisualStyleBackColor = true;
-            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -483,6 +497,7 @@
         private System.Windows.Forms.Button btnGenerate;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripLabel;
+        private System.Windows.Forms.CheckBox checkBoxFollow;
     }
 }
 
