@@ -260,8 +260,24 @@ namespace Case_QRCode
                 }
 
                 ArrayList results = WebCacheTool.WinInetAPI.FindUrlCacheEntries(@"/\d\.\d.*\)$");
-                string fname = "";
-                
+                ArrayList prefixes = new ArrayList();
+                SortedDictionary<DateTime, String> dict = new SortedDictionary<DateTime, String>();
+
+                foreach (WebCacheTool.WinInetAPI.INTERNET_CACHE_ENTRY_INFO entry in results)
+                {
+                    DateTime dt = WebCacheTool.Win32API.FromFileTime(entry.LastAccessTime);
+                    if ((DateTime.Now - dt) > TimeSpan.FromHours(6)) continue;
+                    string fname = entry.lpszLocalFileName;
+                    int index = fname.IndexOf('(');
+                    if (index > 0)
+                    {
+                        string prefix = fname.Substring(0, index);
+                        if (prefixes.Contains(prefix) || dict.ContainsKey(dt)) continue;
+                        prefixes.Add(prefix);
+                        dict.Add(dt, fname);
+                    }
+                }
+              
                 byte[] readBuffer = new byte[4096];
                 int bytesRead;
 
@@ -269,13 +285,14 @@ namespace Case_QRCode
                 byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
                 string accnum = "";
                 string dicom_mrn = "";
+                string fname_match = "";
 
                 if (accession != "")
-                {                  
-                    foreach (WebCacheTool.WinInetAPI.INTERNET_CACHE_ENTRY_INFO entry in results)
+                {
+                    foreach (KeyValuePair<DateTime, string> p in dict)
                     {
-                        fname = entry.lpszLocalFileName;
-                        using (Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read))
+                        fname_match = p.Value;
+                        using (Stream s = new FileStream(fname_match, FileMode.Open, FileAccess.Read))
                         {
                             bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
                             accnum = getDicomString(readBuffer, acc, bytesRead);
@@ -284,16 +301,16 @@ namespace Case_QRCode
                     }
                     if (accnum != accession)
                     {
-                        fname = "";
+                        fname_match = "";
                         accession = "";
                     }
                 }
-                if ((fname=="") && (medrecnum!=""))
+                if (fname_match == "")
                 {
-                    foreach (WebCacheTool.WinInetAPI.INTERNET_CACHE_ENTRY_INFO entry in results)
+                    foreach (KeyValuePair<DateTime, string> p in dict)
                     {
-                        fname = entry.lpszLocalFileName;
-                        using (Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read))
+                        fname_match = p.Value;
+                        using (Stream s = new FileStream(fname_match, FileMode.Open, FileAccess.Read))
                         {
                             bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
                             dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
@@ -305,7 +322,25 @@ namespace Case_QRCode
                         return;
                     }
                 }
-                if (fname!="") getDemographics(fname, medrecnum, accession!="");
+                if ((fname_match=="") && (medrecnum!=""))
+                {
+                    foreach (KeyValuePair<DateTime, string> p in dict)
+                    {
+                        fname_match = p.Value;
+                        using (Stream s = new FileStream(fname_match, FileMode.Open, FileAccess.Read))
+                        {
+                            bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
+                            dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
+                            if (dicom_mrn == medrecnum) break;
+                        }
+                    }
+                    if (dicom_mrn != medrecnum)
+                    {
+                        return;
+                    }
+                }
+
+                if (fname_match!="") getDemographics(fname_match, medrecnum, accession!="");
             }
 
         }
