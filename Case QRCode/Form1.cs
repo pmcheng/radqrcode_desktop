@@ -388,6 +388,7 @@ namespace Case_QRCode
             //string txtDOB = convertDate(rawText);
 
             //string txtGender = getDicomString(readBuffer, mf, bytesRead);
+            textDesc.Text = "";
             EncodeData();
 
             preventGenerateCode = false;
