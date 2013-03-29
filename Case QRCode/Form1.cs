@@ -111,6 +111,22 @@ namespace Case_QRCode
                 sr = new StreamReader(ms, Encoding.Unicode);
                 medrecnum = sr.ReadToEnd().TrimEnd('\0');
             }
+
+            ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
+            if (ms == null) // Not a Synapse drag event
+            {
+                Array data = e.Data.GetData("FileDrop") as Array;
+                if ((data != null) && (data.GetValue(0) is String))
+                {
+                    string dcmfile = ((string[])data)[0];
+                    if (File.Exists(dcmfile))
+                    {
+                        getDemographics(dcmfile, medrecnum, true, false);
+                        return;
+                    }
+                }
+            }
+
             if (cbNetwork.Checked)
             {
                 ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
@@ -136,15 +152,10 @@ namespace Case_QRCode
                     datasource = datasource.Replace("%253A", ":");
                     datasource = datasource.Replace("%252F", "/");
 
-                    //textBoxStatus.Text = "";
-                    //textBoxLine(datasource);
                     Uri uriImageURL = new Uri(datasource);
 
                     string studyUID = Regex.Match(rawstring, @"studyuid=(\d*)").Groups[1].Value;
                     string imageUID = Regex.Match(rawstring, @"imageuid=(\d*)").Groups[1].Value;
-
-                    //textBoxLine("StudyUID = " + studyUID);
-                    //textBoxLine("ImageUID = " + imageUID);
 
                     string uriBase = uriImageURL.GetLeftPart(UriPartial.Authority);
 
@@ -152,22 +163,7 @@ namespace Case_QRCode
                     string downloadURL;
 
                     string querystr;
-//                    if (datasource.Contains("lacsynapse"))
-//                    {
-//                        querystr = @"cmd=select s.http_url||iv.filename as httpfile,
-//                                               s.https_url||iv.filename as httpsfile,
-//                                               iv.offset as offset,iv.length as length
-//                                               from image_version iv, 
-//                                                 storage s, 
-//                                                 compression c
-//                                               where iv.storage_uid=s.id and 
-//                                                 c.aon_name='Original' and 
-//                                                 c.id=iv.compression_uid and
-//                                                 iv.image_uid=" + imageUID + "&";
-//                    }
-//                    else
-//                    {
-                        querystr = @"cmd=select s.http_url||iv.filename as httpfile,
+                    querystr = @"cmd=select s.http_url||iv.filename as httpfile,
                                                s.https_url||iv.filename as httpsfile,
                                                iv.offset as offset,iv.length as length
                                                from image_version iv, 
@@ -177,8 +173,6 @@ namespace Case_QRCode
                                                  c.aon_name_us='Original' and 
                                                  c.id=iv.compression_uid and
                                                  iv.image_uid=" + imageUID + "&";
-//                    }
-
 
                     byte[] result = retrieveRDS(uriFujiRDS, querystr);
                     if (result == null) return;
@@ -205,21 +199,15 @@ namespace Case_QRCode
                         studyURL = studyURLhttp;
                     }
                     string imageURL = studyURL + "(" + offset + "," + length + ")";
-                    //textBoxLine(imageURL);
                     downloadURL = imageURL;
                     string dcmfile = Path.ChangeExtension(Path.GetTempFileName(), ".dcm");
 
                     WebClient client = new WebClient();
                     client.Credentials = myCredentialCache;
                     client.DownloadFile(downloadURL, dcmfile);
-                    //string outputfile = Path.Combine(Path.GetTempPath(), "temp.txt");
-                    //Run("dcmdump.exe", "", dcmfile, outputfile);
-                    //textBoxLine(File.ReadAllText(outputfile));
-                    getDemographics(dcmfile, medrecnum, true);
+                    getDemographics(dcmfile, medrecnum, true, true);
                     File.Delete(dcmfile);
-                    //Clipboard.SetText(textBoxStatus.Text);
                 }
-
             }
             else
             {
@@ -324,7 +312,7 @@ namespace Case_QRCode
                     }
                 }
 
-                if (fname_match!="") getDemographics(fname_match, medrecnum, accession!="");
+                if (fname_match!="") getDemographics(fname_match, medrecnum, accession!="", true);
             }
 
         }
@@ -339,7 +327,7 @@ namespace Case_QRCode
             return returnValue;
         }
 
-        void getDemographics(string fname, string medrecnum, bool correct_accession)
+        void getDemographics(string fname, string medrecnum, bool correct_accession, bool synapse_event)
         {
             preventGenerateCode = true;
 
@@ -352,25 +340,24 @@ namespace Case_QRCode
             //byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
             byte[] desc = { 0x08, 0x00, 0x30, 0x10, 0x4c, 0x4f };
 
-            byte[] pn = { 0x10, 0x00, 0x10, 0x00, 0x50, 0x4e };
             byte[] mrn = { 0x10, 0x00, 0x20, 0x00, 0x4c, 0x4f };
-            //byte[] dob = { 0x10, 0x00, 0x30, 0x00, 0x44, 0x41 };
-            //byte[] mf = { 0x10, 0x00, 0x40, 0x00, 0x43, 0x53 };
-            //byte[] loc = { 0x08, 0x00, 0x80, 0x00, 0x4c, 0x4f };
+            byte[] loc = { 0x08, 0x00, 0x80, 0x00, 0x4c, 0x4f };
 
             string dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
-            if ((dicom_mrn == medrecnum) || (dicom_mrn == ""))
-            {
-                textMRN.Text = medrecnum;
-            }
-            else
+            if ((synapse_event) && (dicom_mrn!= medrecnum) && (dicom_mrn!=""))
             {
                 return;  // we've got the wrong file...
             }
+            textMRN.Text=dicom_mrn;
 
+            string rawText = "";
+
+            if (!synapse_event)
+            {
+                textLoc.Text = getDicomString(readBuffer, loc, bytesRead);
+            }
             
             //string accnum = getDicomString(readBuffer, acc, bytesRead);
-            string rawText = "";
             //string studyDate = "";
             //string studyDesc = "";
             if (correct_accession)
@@ -381,13 +368,6 @@ namespace Case_QRCode
                 textStudy.Text = rawText.Replace("^", " ");
             }
 
-            //rawText = getDicomString(readBuffer, pn, bytesRead);
-            //textName.Text = rawText.Replace("^", " ");
-
-            //rawText = getDicomString(readBuffer, dob, bytesRead);
-            //string txtDOB = convertDate(rawText);
-
-            //string txtGender = getDicomString(readBuffer, mf, bytesRead);
             textDesc.Text = "";
             EncodeData();
 
@@ -479,12 +459,17 @@ namespace Case_QRCode
             {
                 string[] stringList ={textLoc.Text, textMRN.Text, textStudy.Text, textDate.Text, 
                                          textDesc.Text, checkBoxFollow.Checked?"1":"0"};
-                
-                String data = string.Join("|", stringList);
-
-                image = qrCodeEncoder.Encode(data);
-                pb.Image = image;
-                textEncode.Text=data;
+                if (string.Join("", stringList) == "0")
+                {
+                    // empty case
+                    pb.Image = null;
+                    textEncode.Text = "";
+                } else {
+                    String data = string.Join("|", stringList);
+                    image = qrCodeEncoder.Encode(data);
+                    pb.Image = image;
+                    textEncode.Text = data;
+                }
                 toolStripLabel.Text = "";
             }
             catch (Exception e)
