@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Case_QRCode
+namespace RadQRCode
 {
     public partial class Authentication : Form
     {

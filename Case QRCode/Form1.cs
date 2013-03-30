@@ -15,7 +15,7 @@ using ThoughtWorks.QRCode.Codec;
 using ThoughtWorks.QRCode.Codec.Data;
 using ThoughtWorks.QRCode.Codec.Util;
 
-namespace Case_QRCode
+namespace RadQRCode
 {
     public partial class Form1 : Form
     {

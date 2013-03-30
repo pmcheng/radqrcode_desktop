@@ -1,4 +1,4 @@
-﻿namespace Case_QRCode
+﻿namespace RadQRCode
 {
     partial class Form1
     {
@@ -381,11 +381,11 @@
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(71, 4);
+            this.label5.Location = new System.Drawing.Point(76, 4);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(107, 16);
+            this.label5.Size = new System.Drawing.Size(96, 16);
             this.label5.TabIndex = 0;
-            this.label5.Text = "Case QRCode";
+            this.label5.Text = "RadQRCode";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label6
@@ -448,7 +448,7 @@
             this.Controls.Add(this.imagePanel);
             this.MinimumSize = new System.Drawing.Size(676, 450);
             this.Name = "Form1";
-            this.Text = "Case QRCode";
+            this.Text = "RadQRCode";
             ((System.ComponentModel.ISupportInitialize)(this.pb)).EndInit();
             this.imagePanel.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);

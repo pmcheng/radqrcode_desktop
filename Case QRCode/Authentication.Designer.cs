@@ -1,4 +1,4 @@
-﻿namespace Case_QRCode
+﻿namespace RadQRCode
 {
     partial class Authentication
     {
