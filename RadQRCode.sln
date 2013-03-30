@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadQRCode", "Case QRCode\RadQRCode.csproj", "{78867C35-9E71-4A4A-913B-7EC5B0997031}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadQRCode", "RadQRCode\RadQRCode.csproj", "{78867C35-9E71-4A4A-913B-7EC5B0997031}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
