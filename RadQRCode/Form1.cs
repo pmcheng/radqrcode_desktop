@@ -333,7 +333,7 @@ namespace RadQRCode
 
             Stream s = new FileStream(fname, FileMode.Open, FileAccess.Read);
 
-            byte[] readBuffer = new byte[4096];
+            byte[] readBuffer = new byte[65536];
             int bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
 
             byte[] date = { 0x08, 0x00, 0x20, 0x00, 0x44, 0x41 };
@@ -403,8 +403,26 @@ namespace RadQRCode
 
         string getDicomString(byte[] readBuffer, byte[] target, int bytes)
         {
+            string match = matchString(readBuffer, target, bytes, true);
+            if (match != string.Empty) return match;
+            return matchString(readBuffer, target, bytes, false);
+
+        }
+
+        string matchString(byte[] readBuffer, byte[] target, int bytes, bool littleEndian)
+        {
             int fieldLength;
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+
+            if (!littleEndian)
+            {
+                byte b = target[0];
+                target[0] = target[1];
+                target[1] = b;
+                b = target[2];
+                target[2] = target[3];
+                target[3] = b;
+            }
 
             for (int i = 0; i < bytes - target.Length; i++)
             {
@@ -417,13 +435,21 @@ namespace RadQRCode
                     }
                 if (match)
                 {
-                    fieldLength = 256 * readBuffer[i + target.Length + 1] + readBuffer[i + target.Length];
+                    if (littleEndian)
+                    {
+                        fieldLength = 256 * readBuffer[i + target.Length + 1] + readBuffer[i + target.Length];
+                    }
+                    else
+                    {
+                        fieldLength = 256 * readBuffer[i + target.Length] + readBuffer[i + target.Length+1];
+                    }
                     byte[] temp = new byte[fieldLength];
                     Array.Copy(readBuffer, i + target.Length + 2, temp, 0, fieldLength);
                     return enc.GetString(temp).Trim().TrimEnd('\0');
                 }
             }
             return string.Empty;
+
         }
 
         void GenerateQRCode()
