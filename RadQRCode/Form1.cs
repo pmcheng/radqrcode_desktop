@@ -485,6 +485,10 @@ namespace RadQRCode
             {
                 string[] stringList ={textLoc.Text, textMRN.Text, textStudy.Text, textDate.Text, 
                                          textDesc.Text, checkBoxFollow.Checked?"1":"0"};
+                for (int i = 0; i < stringList.Length; i++)
+                {
+                    stringList[i]=Regex.Replace(stringList[i], @"[|]", "");
+                }
                 if (string.Join("", stringList) == "0")
                 {
                     // empty case
