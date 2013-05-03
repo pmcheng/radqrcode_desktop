@@ -163,7 +163,7 @@ namespace RadQRCode
                     string downloadURL;
 
                     string querystr;
-                    querystr = @"cmd=select s.http_url||iv.filename as httpfile,
+                    querystr = @"select s.http_url||iv.filename as httpfile,
                                                s.https_url||iv.filename as httpsfile,
                                                iv.offset as offset,iv.length as length
                                                from image_version iv, 
@@ -172,7 +172,7 @@ namespace RadQRCode
                                                where iv.storage_uid=s.id and 
                                                  c.aon_name_us='Original' and 
                                                  c.id=iv.compression_uid and
-                                                 iv.image_uid=" + imageUID + "&";
+                                                 iv.image_uid=" + imageUID;
 
                     byte[] result = retrieveRDS(uriFujiRDS, querystr);
                     if (result == null) return;
@@ -518,7 +518,8 @@ namespace RadQRCode
 
         private byte[] retrieveRDS(Uri uriRDS, string query)
         {
-            string queryEsc = query.Replace(" ", "%20");
+            query = "cmd=" + query + "&";
+            string queryEsc = System.Uri.EscapeUriString(query); 
             byte[] buffer = new byte[65536];
             byte[] postBytes = Encoding.ASCII.GetBytes(queryEsc);
 
