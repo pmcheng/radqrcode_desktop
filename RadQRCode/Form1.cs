@@ -148,7 +148,9 @@ namespace RadQRCode
                     }
 
                     textLoc.Text = mapToLocation(rawstring);
+
                     string datasource = Regex.Match(rawstring, @"datasource=(.*?)%26").Groups[1].Value;
+
                     datasource = datasource.Replace("%253A", ":");
                     datasource = datasource.Replace("%252F", "/");
 
@@ -211,8 +213,7 @@ namespace RadQRCode
             }
             else
             {
-
-                string accession = "";
+                string studyUID = "";
                 ms = e.Data.GetData("Synapse.TC") as MemoryStream;
                 if (ms != null)
                 {
@@ -220,8 +221,8 @@ namespace RadQRCode
                     string[] tcString = sr.ReadToEnd().Trim('\0').Split(',');
                     foreach (string s in tcString)
                     {
-                        if (s.StartsWith("A="))
-                            accession = s.Substring(2);
+                        if (s.StartsWith("S="))
+                            studyUID = s.Substring(2);
                     }
                 }
                 string imageURL = "";
@@ -266,16 +267,16 @@ namespace RadQRCode
                     }
                 }
               
-                byte[] readBuffer = new byte[4096];
+                byte[] readBuffer = new byte[65536];
                 int bytesRead;
 
                 byte[] mrn = { 0x10, 0x00, 0x20, 0x00, 0x4c, 0x4f };
-                byte[] acc = { 0x08, 0x00, 0x50, 0x00, 0x53, 0x48 };
-                string accnum = "";
+                byte[] sid = { 0x20, 0x00, 0x0d, 0x00, 0x55, 0x49 };
+                string test_sid = "not found";
                 string dicom_mrn = "";
                 string fname_match = "";
 
-                if (accession != "")
+                if (studyUID!="")
                 {
                     for (int i = slist.Count - 1; i >= 0; i--)
                     {
@@ -283,14 +284,13 @@ namespace RadQRCode
                         using (Stream s = new FileStream(fname_match, FileMode.Open, FileAccess.Read))
                         {
                             bytesRead = s.Read(readBuffer, 0, readBuffer.Length);
-                            accnum = getDicomString(readBuffer, acc, bytesRead);
-                            if (accnum == accession) break;
+                            test_sid = getDicomString(readBuffer, sid, bytesRead);
+                            if (test_sid == studyUID) break;
                         }
                     }
-                    if (accnum != accession)
+                    if (test_sid != studyUID)
                     {
                         fname_match = "";
-                        accession = "";
                     }
                 }
 
@@ -312,7 +312,7 @@ namespace RadQRCode
                     }
                 }
 
-                if (fname_match!="") getDemographics(fname_match, medrecnum, accession!="", true);
+                if (fname_match!="") getDemographics(fname_match, medrecnum, test_sid==studyUID, true);
             }
 
         }
@@ -327,7 +327,7 @@ namespace RadQRCode
             return returnValue;
         }
 
-        void getDemographics(string fname, string medrecnum, bool correct_accession, bool synapse_event)
+        void getDemographics(string fname, string medrecnum, bool correct_study_id, bool synapse_event)
         {
             preventGenerateCode = true;
 
@@ -343,12 +343,13 @@ namespace RadQRCode
             byte[] mrn = { 0x10, 0x00, 0x20, 0x00, 0x4c, 0x4f };
             byte[] loc = { 0x08, 0x00, 0x80, 0x00, 0x4c, 0x4f };
 
-            string dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
-            if ((synapse_event) && (dicom_mrn!= medrecnum) && (dicom_mrn!=""))
-            {
-                return;  // we've got the wrong file...
-            }
-            textMRN.Text=dicom_mrn;
+            //string dicom_mrn = getDicomString(readBuffer, mrn, bytesRead);
+            //if ((synapse_event) && (dicom_mrn!= medrecnum) && (dicom_mrn!=""))
+            //{
+            //    return;  // we've got the wrong file...
+            //}
+            //textMRN.Text=dicom_mrn;
+            textMRN.Text = medrecnum;
 
             string rawText = "";
 
@@ -360,7 +361,7 @@ namespace RadQRCode
             //string accnum = getDicomString(readBuffer, acc, bytesRead);
             //string studyDate = "";
             //string studyDesc = "";
-            if (correct_accession)
+            if (correct_study_id)
             {
                 rawText = getDicomString(readBuffer, date, bytesRead);
                 textDate.Text= convertDate(rawText);
@@ -487,14 +488,16 @@ namespace RadQRCode
                                          textDesc.Text, checkBoxFollow.Checked?"1":"0"};
                 for (int i = 0; i < stringList.Length; i++)
                 {
-                    stringList[i]=Regex.Replace(stringList[i], @"[|]", "");
+                    stringList[i] = Regex.Replace(stringList[i], @"[|]", "");
                 }
                 if (string.Join("", stringList) == "0")
                 {
                     // empty case
                     pb.Image = null;
                     textEncode.Text = "";
-                } else {
+                }
+                else
+                {
                     String data = string.Join("|", stringList);
                     image = qrCodeEncoder.Encode(data);
                     pb.Image = image;
@@ -502,10 +505,13 @@ namespace RadQRCode
                 }
                 toolStripLabel.Text = "";
             }
+            catch (System.IndexOutOfRangeException)
+            {
+                toolStripLabel.Text = "Error: the text is too long for generating a QRCode!";
+            }
             catch (Exception e)
             {
                 toolStripLabel.Text = e.Message.ToString();
-                //MessageBox.Show(e.ToString());
             }
             
 
