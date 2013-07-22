@@ -413,6 +413,8 @@
             // cbNetwork
             // 
             this.cbNetwork.AutoSize = true;
+            this.cbNetwork.Checked = true;
+            this.cbNetwork.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbNetwork.Location = new System.Drawing.Point(140, 75);
             this.cbNetwork.Name = "cbNetwork";
             this.cbNetwork.Size = new System.Drawing.Size(109, 17);

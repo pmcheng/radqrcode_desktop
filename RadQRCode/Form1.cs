@@ -26,6 +26,7 @@ namespace RadQRCode
 
         Dictionary<string, string> dictLocation = new Dictionary<string, string>()
         {
+            {"datasource=https%253A%252F%252Fkeckimaging.usc.edu", "Keck/Norris"},
             {"datasource=https%253A%252F%252Fexternal.synapse.uscuh.com", "Keck/Norris"},
             {"datasource=http%253A%252F%252Fsynapse.uscuh.com", "Keck/Norris"},
             {"datasource=https%253A%252F%252Ffujipacs.hsc.usc.edu","HCC2"},
