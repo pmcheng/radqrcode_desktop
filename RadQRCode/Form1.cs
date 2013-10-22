@@ -163,19 +163,20 @@ namespace RadQRCode
                     string uriBase = uriImageURL.GetLeftPart(UriPartial.Authority);
 
                     Uri uriFujiRDS = new Uri(uriBase + "/SynapseScripts/fujirds.asp");
-                    string downloadURL;
 
                     string querystr;
-                    querystr = @"select s.http_url||iv.filename as httpfile,
-                                               s.https_url||iv.filename as httpsfile,
-                                               iv.offset as offset,iv.length as length
-                                               from image_version iv, 
-                                                 storage s, 
-                                                 compression c
-                                               where iv.storage_uid=s.id and 
-                                                 c.aon_name_us='Original' and 
-                                                 c.id=iv.compression_uid and
-                                                 iv.image_uid=" + imageUID;
+
+                    querystr = @"select p.external_eid as mrn, 
+s.ris_study_euid as accessionnumber, 
+description, 
+study_timedate 
+from patient p, 
+procedure_info pi,
+study s,
+image i 
+where pi.id=s.procedure_info_uid and p.id=
+s.patient_uid and s.id=i.study_uid and i.id=" + imageUID;
+
 
                     byte[] result = retrieveRDS(uriFujiRDS, querystr);
                     if (result == null) return;
@@ -185,31 +186,18 @@ namespace RadQRCode
                     ByteArrayToFile(tempfile, result);
 
                     rs.Open(tempfile, "Provider=MSPersist", ADODB.CursorTypeEnum.adOpenForwardOnly, ADODB.LockTypeEnum.adLockReadOnly, 0);
-                    string studyURLhttp = rs.Fields["httpfile"].Value.ToString();
-                    string studyURLhttps = rs.Fields["httpsfile"].Value.ToString();
-                    long offset = Convert.ToInt64(rs.Fields["offset"].Value);
-                    long length = Convert.ToInt64(rs.Fields["length"].Value);
+
+                    string description = rs.Fields["description"].Value.ToString();
+                    DateTime dt = DateTime.Parse(rs.Fields["study_timedate"].Value.ToString());
+                    string mrn = rs.Fields["mrn"].Value.ToString();
+                    
                     rs.Close();
                     File.Delete(tempfile);
+                    textStudy.Text = description;
+                    textMRN.Text = mrn;
+                    textDate.Text = dt.ToString("yyyy-MM-dd");
 
-                    string studyURL;
-                    if (uriBase.StartsWith("https"))
-                    {
-                        studyURL = studyURLhttps;
-                    }
-                    else
-                    {
-                        studyURL = studyURLhttp;
-                    }
-                    string imageURL = studyURL + "(" + offset + "," + length + ")";
-                    downloadURL = imageURL;
-                    string dcmfile = Path.ChangeExtension(Path.GetTempFileName(), ".dcm");
 
-                    WebClient client = new WebClient();
-                    client.Credentials = myCredentialCache;
-                    client.DownloadFile(downloadURL, dcmfile);
-                    getDemographics(dcmfile, medrecnum, true, true);
-                    File.Delete(dcmfile);
                 }
             }
             else
