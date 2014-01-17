@@ -193,6 +193,7 @@ s.patient_uid and s.id=i.study_uid and i.id=" + imageUID;
                     
                     rs.Close();
                     File.Delete(tempfile);
+                    textDesc.Text = "";
                     textStudy.Text = description;
                     textMRN.Text = mrn;
                     textDate.Text = dt.ToString("yyyy-MM-dd");
