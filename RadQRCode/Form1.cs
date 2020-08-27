@@ -56,6 +56,7 @@ namespace RadQRCode
             cboCorrectionLevel.SelectedIndex = 0;
             txtSize.Text = "10";
 
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;  // activate TLS 1.2
             ServicePointManager.Expect100Continue = false;
             // Ignore Certificate validation failures (aka untrusted certificate + certificate chains)
             ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) => true);
