@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Web;
 
 using System.IO;
 using System.Net;
@@ -26,13 +27,13 @@ namespace RadQRCode
 
         Dictionary<string, string> dictLocation = new Dictionary<string, string>()
         {
-            {"datasource=https%253A%252F%252Fkeckimaging.usc.edu", "Keck/Norris"},
-            {"datasource=https%253A%252F%252Fexternal.synapse.uscuh.com", "Keck/Norris"},
-            {"datasource=http%253A%252F%252Fsynapse.uscuh.com", "Keck/Norris"},
-            {"datasource=https%253A%252F%252Ffujipacs.hsc.usc.edu","HCC2"},
-            {"datasource=http%253A%252F%252Fhcc2synvweb","HCC2"},
-            {"datasource=http%253A%252F%252Flacsynapse","LACUSC"},
-            {"datasource=http%253A%252F%252Fdhssynapse","LACUSC"}
+            {"https://keckimaging.usc.edu", "Keck/Norris"},
+            {"https://external.synapse.uscuh.com", "Keck/Norris"},
+            {"http://synapse.uscuh.com", "Keck/Norris"},
+            {"https://fujipacs.hsc.usc.edu","HCC2"},
+            {"http://hcc2synvweb","HCC2"},
+            {"http://lacsynapse","LACUSC"},
+            {"http://dhssynapse","LACUSC"}
         };
 
 
@@ -71,6 +72,10 @@ namespace RadQRCode
             {
                 MemoryStream ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
                 validData = (ms != null);
+                if (!validData)
+                {
+                    validData = e.Data.GetDataPresent("Text");
+                }
             }
             else
             {
@@ -116,7 +121,7 @@ namespace RadQRCode
             }
 
             ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
-            if (ms == null) // Not a Synapse drag event
+            if (!e.Data.GetDataPresent("Text") && (ms == null)) // Not a Synapse drag event
             {
                 Array data = e.Data.GetData("FileDrop") as Array;
                 if ((data != null) && (data.GetValue(0) is String))
@@ -132,43 +137,64 @@ namespace RadQRCode
 
             if (cbNetwork.Checked)
             {
-                ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
-                if (ms != null)
+                string datasource = "";
+                string querystr = "";
+                if (e.Data.GetDataPresent("Text"))
                 {
-                    sr = new StreamReader(ms);
-                    string rawstring = sr.ReadToEnd().TrimEnd('\0');
-                    //textBoxLine(rawstring);
-
-                    int epath_loc = rawstring.IndexOf("epath=");
-                    if (epath_loc != -1)
+                    datasource = (String)e.Data.GetData("Text");
+                    System.Collections.Specialized.NameValueCollection qscoll = HttpUtility.ParseQueryString(datasource);
+                    String objectUID = qscoll.Get("objectUID");
+                    if (objectUID == null)
                     {
-                        string epath = DecodeFrom64(rawstring.Substring(epath_loc + 6));
-                        epath = epath.Substring(0, epath.LastIndexOf("&") + 1);
-                        epath = epath.Replace("&", "%26");
-                        epath = epath.Replace("%3A", "%253A");
-                        epath = epath.Replace("%2F", "%252F");
-                        rawstring = rawstring.Substring(0, epath_loc) + "path=" + epath;
+                        objectUID = qscoll.Get("DDFirstSOPInstanceUID");
                     }
+                    if (objectUID != null)
+                    {
+                        querystr = @"select p.external_eid as mrn, 
+s.ris_study_euid as accessionnumber, 
+description, 
+study_timedate 
+from patient p, 
+procedure_info pi,
+study s,
+image i 
+where pi.id=s.procedure_info_uid and p.id=
+s.patient_uid and s.id=i.study_uid and i.sop_instance_euid='" + objectUID+"'";
+                        textLoc.Text = mapToLocation(datasource);
+                    }
+                }
+                if (querystr == "")
+                {
+                    ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
+                    if (ms != null)
+                    {
+                        sr = new StreamReader(ms);
+                        string rawstring = sr.ReadToEnd().TrimEnd('\0');
+                        //textBoxLine(rawstring);
 
-                    textLoc.Text = mapToLocation(rawstring);
+                        int epath_loc = rawstring.IndexOf("epath=");
+                        if (epath_loc != -1)
+                        {
+                            string epath = DecodeFrom64(rawstring.Substring(epath_loc + 6));
+                            epath = epath.Substring(0, epath.LastIndexOf("&") + 1);
+                            epath = epath.Replace("&", "%26");
+                            epath = epath.Replace("%3A", "%253A");
+                            epath = epath.Replace("%2F", "%252F");
+                            rawstring = rawstring.Substring(0, epath_loc) + "path=" + epath;
+                        }
 
-                    string datasource = Regex.Match(rawstring, @"datasource=(.*?)%26").Groups[1].Value;
+                        datasource = Regex.Match(rawstring, @"datasource=(.*?)%26").Groups[1].Value;
 
-                    datasource = datasource.Replace("%253A", ":");
-                    datasource = datasource.Replace("%252F", "/");
+                        datasource = datasource.Replace("%253A", ":");
+                        datasource = datasource.Replace("%252F", "/");
+                        textLoc.Text = mapToLocation(datasource);
 
-                    Uri uriImageURL = new Uri(datasource);
 
-                    string studyUID = Regex.Match(rawstring, @"studyuid=(\d*)").Groups[1].Value;
-                    string imageUID = Regex.Match(rawstring, @"imageuid=(\d*)").Groups[1].Value;
+                        string studyUID = Regex.Match(rawstring, @"studyuid=(\d*)").Groups[1].Value;
+                        string imageUID = Regex.Match(rawstring, @"imageuid=(\d*)").Groups[1].Value;
 
-                    string uriBase = uriImageURL.GetLeftPart(UriPartial.Authority);
 
-                    Uri uriFujiRDS = new Uri(uriBase + "/SynapseScripts/fujirds.asp");
-
-                    string querystr;
-
-                    querystr = @"select p.external_eid as mrn, 
+                        querystr = @"select p.external_eid as mrn, 
 s.ris_study_euid as accessionnumber, 
 description, 
 study_timedate 
@@ -178,7 +204,12 @@ study s,
 image i 
 where pi.id=s.procedure_info_uid and p.id=
 s.patient_uid and s.id=i.study_uid and i.id=" + imageUID;
-
+                    }
+                }
+                if (querystr!="") {
+                    Uri uriImageURL = new Uri(datasource);
+                    string uriBase = uriImageURL.GetLeftPart(UriPartial.Authority);
+                    Uri uriFujiRDS = new Uri(uriBase + "/SynapseScripts/fujirds.asp");
 
                     byte[] result = retrieveRDS(uriFujiRDS, querystr);
                     if (result == null) return;
