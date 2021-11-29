@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -13,8 +11,9 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Collections;
 using ThoughtWorks.QRCode.Codec;
-using ThoughtWorks.QRCode.Codec.Data;
-using ThoughtWorks.QRCode.Codec.Util;
+
+using Synapse5Lib;
+
 
 namespace RadQRCode
 {
@@ -24,6 +23,7 @@ namespace RadQRCode
         string dragFilename = "";
         bool preventGenerateCode = false;
         CredentialCache myCredentialCache;
+        Synapse5 syn;
 
         Dictionary<string, string> dictLocation = new Dictionary<string, string>()
         {
@@ -63,6 +63,7 @@ namespace RadQRCode
             ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) => true);
 
             myCredentialCache = new CredentialCache();
+            syn = new Synapse5();
 
         }
 
@@ -143,6 +144,32 @@ namespace RadQRCode
                 {
                     datasource = (String)e.Data.GetData("Text");
                     System.Collections.Specialized.NameValueCollection qscoll = HttpUtility.ParseQueryString(datasource);
+                    String studyUID = qscoll.Get("studyUID");
+                    String MRN = qscoll.Get("DDsrcPatientMRN");
+                    String source = qscoll.Get("dataSource");
+                    Uri site = new Uri(datasource);
+                    string url = site.GetLeftPart(UriPartial.Authority);
+                    if (!syn.SetAccessToken(url))
+                    {
+                        syn.SetAccessTokenEnvironment(url);
+                    }
+                    dynamic result = syn.GetWFStudyDetails(studyUID, source);
+                    String description = result.ProcedureDescription;
+
+                    DateTime dt = result.PerformedDate;
+                    if ((MRN!=null) && (dt!=null) && (description!=null))
+                    {
+                        preventGenerateCode = true;
+                        textMRN.Text = MRN;
+                        textStudy.Text = description;
+                        textDate.Text = dt.ToString("yyyy-MM-dd");
+                        textDesc.Text = "";
+                        textLoc.Text = mapToLocation(datasource);
+                        EncodeData();
+                        preventGenerateCode = false;
+                        return;
+                    }
+
                     String objectUID = qscoll.Get("objectUID");
                     if (objectUID == null)
                     {
