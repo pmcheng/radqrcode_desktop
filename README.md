@@ -6,7 +6,7 @@ This is the desktop portion of an application set designed to facilitate recordi
 
 The desktop application allows drag and drop from a Synapse PACS workstation, automatically populating case metadata.  The user can add a free text description.  A QR code is generated dynamically from concatenated metadata text separated by a vertical bar delimiter.  The application also allows for direct retrieval of DICOM data from the Synapse server, as well as drag and drop of a DICOM file.
 
-Requires .NET Framework 2.0 or higher.
+Requires .NET Framework 4.7.2 or higher.
 
 This project uses code from the following open source projects:
 
