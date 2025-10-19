@@ -13,6 +13,7 @@ using System.Collections;
 using ThoughtWorks.QRCode.Codec;
 
 using Synapse5Lib;
+using Newtonsoft.Json;
 
 
 namespace RadQRCode
@@ -75,7 +76,7 @@ namespace RadQRCode
                 validData = (ms != null);
                 if (!validData)
                 {
-                    validData = e.Data.GetDataPresent("Text");
+                    validData = e.Data.GetDataPresent("Text") || e.Data.GetDataPresent("CF_Synapse.ImageState_JSON");
                 }
             }
             else
@@ -122,7 +123,7 @@ namespace RadQRCode
             }
 
             ms = e.Data.GetData("UniformResourceLocator") as MemoryStream;
-            if (!e.Data.GetDataPresent("Text") && (ms == null)) // Not a Synapse drag event
+            if (!e.Data.GetDataPresent("Text") && !e.Data.GetDataPresent("CF_Synapse.ImageState_JSON") && (ms == null)) // Not a Synapse drag event
             {
                 Array data = e.Data.GetData("FileDrop") as Array;
                 if ((data != null) && (data.GetValue(0) is String))
@@ -143,6 +144,17 @@ namespace RadQRCode
                 if (e.Data.GetDataPresent("Text"))
                 {
                     datasource = (String)e.Data.GetData("Text");
+                }
+                if (e.Data.GetDataPresent("CF_Synapse.ImageState_JSON")) // for Synapse VX
+                {
+                    MemoryStream tempms = e.Data.GetData("CF_Synapse.ImageState_JSON") as MemoryStream;
+                    byte[] byteArray = tempms.ToArray();
+                    string vx_json = Encoding.UTF8.GetString(byteArray);
+                    dynamic jobj = JsonConvert.DeserializeObject(vx_json);
+                    datasource = jobj.data.sourceUrl;
+                }
+                if (datasource != "")
+                {
                     System.Collections.Specialized.NameValueCollection qscoll = HttpUtility.ParseQueryString(datasource);
                     String studyUID = qscoll.Get("studyUID");
                     String MRN = qscoll.Get("DDsrcPatientMRN");

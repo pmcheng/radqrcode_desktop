@@ -63,6 +63,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Synapse5Lib">
       <HintPath>..\..\Synapse5Lib\Synapse5Lib\bin\Debug\Synapse5Lib.dll</HintPath>
     </Reference>
@@ -108,6 +111,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -159,7 +163,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Ilmerge.exe /target:winexe /out:"$(ProjectDir)bin\$(TargetFileName)" "$(TargetDir)$(TargetFileName)" "$(TargetDir)adodb.dll" "$(TargetDir)Newtonsoft.Json.dll" "$(TargetDir)Synapse5Lib.dll" "$(TargetDir)ThoughtWorks.QRCode.dll"
+    <PostBuildEvent>C:\bin\Ilmerge.exe /wildcards /target:winexe /out:"$(ProjectDir)bin\$(TargetFileName)" "$(TargetDir)$(TargetFileName)" "$(TargetDir)*.dll"
 if not "%25RADUSC_DEPLOY%25"=="" copy "$(ProjectDir)bin\$(TargetFileName)" "%25RADUSC_DEPLOY%25"
 </PostBuildEvent>
   </PropertyGroup>
